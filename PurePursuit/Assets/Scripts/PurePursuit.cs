@@ -7,6 +7,9 @@ public class PurePursuit : MonoBehaviour
     [SerializeField]
     public List<Vector2> path;
 
+    [SerializeField]
+    private LineRenderer lineRenderer;
+
     public float lookAheadDistance = 0.8f;
 
     public float linearVelocity = 0.8f;
@@ -16,6 +19,20 @@ public class PurePursuit : MonoBehaviour
     private int i = 0;
 
     public float searchRadius;
+    public float lineWidth;
+
+    private void Start()
+    {
+        lineRenderer.startWidth = lineWidth;
+        lineRenderer.endWidth = lineWidth;
+        lineRenderer.startColor = Color.red;
+        lineRenderer.endColor = Color.red;
+        lineRenderer.positionCount = path.Count;
+        for (int i = 0; i < path.Count; i++)
+        {
+            lineRenderer.SetPosition(i, path[i]);
+        }
+    }
 
     private void FixedUpdate()
     {
@@ -32,16 +49,13 @@ public class PurePursuit : MonoBehaviour
         if (path.Count != 0)
         {
             goalPoint = new Vector2(path[i].x, path[i].y);
-            // Calculate the angle to the goal
+
             float angle = Vector2.SignedAngle(new Vector2(transform.up.x, transform.up.y), goalPoint - currentPos);
 
-            // Rotate the vehicle towards the goal
             transform.Rotate(0, 0, angle);
 
-            // Move the vehicle forward
             transform.position = Vector3.MoveTowards(transform.position, goalPoint, linearVelocity);
 
-            // Check if the vehicle has reached the goal point
             if (Vector2.Distance(currentPos, goalPoint) == 0)
             {
                 while (i >= 0)
